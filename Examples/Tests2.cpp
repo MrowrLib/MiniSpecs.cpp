@@ -1,4 +1,4 @@
-#define SPEC_FILE Tests2
+#define SPEC_GROUP Tests2
 
 #include "TestHelper.h"
 

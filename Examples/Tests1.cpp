@@ -1,12 +1,13 @@
-#define SPEC_FILE Tests1
+#define SPEC_GROUP Tests1
 
 #include "TestHelper.h"
 
-Setup { cout << "A Setup 1" << endl; }
-Setup { cout << "A Setup 2" << endl; }
+Setup { cout << "111 Setup 1" << endl; }
+Teardown { cout << "111 Teardown 1" << endl; }
+Test("Test 1") { cout << "111 RUN Test 1" << endl; }
 
-Teardown { cout << "A Teardown 1" << endl; }
-Teardown { cout << "A Teardown 2" << endl; }
+Group("C");
 
-Test("Test 1") { cout << "A RUN Test 1" << endl; }
-Test("Test 2") { cout << "A RUN Test 2" << endl; }
+Setup { cout << "C Setup 1" << endl; }
+Teardown { cout << "C Teardown 1" << endl; }
+Test("Test 1") { cout << "C RUN Test 1" << endl; }

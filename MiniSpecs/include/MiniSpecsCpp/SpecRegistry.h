@@ -39,5 +39,10 @@ namespace MiniSpecsCpp {
         void add_teardown(std::function<void()> teardown) {
             current_spec_group()->teardowns.emplace_back(Teardown{teardown});
         }
+
+        void add_group(std::string name) {
+            _spec_groups.emplace_back(SpecGroup{name});
+            _current_spec_group = &_spec_groups.back();
+        }
     };
 }

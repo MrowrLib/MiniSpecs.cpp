@@ -55,6 +55,7 @@ namespace MiniSpecsCpp {
             unsigned int passed_count = 0;
             unsigned int failed_count = 0;
             for (auto& group : _registry.spec_groups()) {
+                if (!group.name.empty()) std::cout << "[" << group.name << "]" << std::endl;
                 for (auto& spec : group.specs) {
                     std::cout << "Running " << spec.name << std::endl;
                     auto errorMessage = run_setups(group.setups);
