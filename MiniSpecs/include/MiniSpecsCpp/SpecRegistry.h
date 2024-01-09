@@ -16,15 +16,11 @@ namespace MiniSpecsCpp {
             return instance;
         }
 
+        std::unordered_map<std::string, std::function<void()>>& tests() { return _tests; }
+
         void add_test(std::string name, std::function<void()> test) {
             std::cout << "Adding test: " << name << std::endl;
             _tests[name] = test;
-        }
-
-        void run_all_tests() {
-            for (auto& test : _tests) {
-                test.second();
-            }
         }
     };
 }

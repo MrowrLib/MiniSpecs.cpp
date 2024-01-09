@@ -1,9 +1,9 @@
 #define SPEC_FILE FirstTest
 
-#include <MiniSpecs>
+#include "TestHelper.h"
 
-Test("Some cool test") {
-    std::cout << "Hello, OMG we used a macro to define this test!" << std::endl;
-}
+Test("This should fail") { AssertThat(69, Equals(420)); }
 
-Test("second test") { std::cout << "Hello, OMG Second!" << std::endl; }
+Test("This should fail too") { throw "KABOOM"; }
+
+Test("This should also fail") { throw std::runtime_error("std Kaboom"); }

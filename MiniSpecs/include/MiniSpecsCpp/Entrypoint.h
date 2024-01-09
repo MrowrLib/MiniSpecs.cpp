@@ -1,8 +1,8 @@
 #pragma once
 
-#include "SpecRegistry.h"
+#include "SpecSuiteRunner.h"
 
 int main() {
-    MiniSpecsCpp::SpecRegistry::instance().run_all_tests();
+    MiniSpecsCpp::SpecSuiteRunner(MiniSpecsCpp::SpecRegistry::instance()).run();
     return 0;
 }

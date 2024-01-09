@@ -1,6 +1,6 @@
 #define SPEC_FILE MoreTests
 
-#include <MiniSpecs>
+#include "TestHelper.h"
 
 Test("More ONE") { std::cout << "More ONE!!!!" << std::endl; }
 
