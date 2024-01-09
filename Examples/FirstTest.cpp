@@ -1,17 +1,16 @@
 #include <MiniSpecs>
 
-// Test("Something") {
-//     //
-//     AssertThat(69, Equals(420));
-// }
+#define Test(textDescription)                                                             \
+    void                         myTestFunction();                                        \
+    MiniSpecsCpp::FunctionRunner myRunner([]() {                                          \
+        MiniSpecsCpp::SpecRegistry::instance().add_test(textDescription, myTestFunction); \
+    });                                                                                   \
+    void                         myTestFunction()
 
-// void TestSomething() {
-//     //
-//     // AssertThat(69, Equals(420));
-// }
+Test("Some cool test") {
+    std::cout << "Hello, OMG we used a macro to define this test!" << std::endl;
+}
 
-MiniSpecsCpp::FunctionRunner myRunner([]() {
-    MiniSpecsCpp::SpecRegistry::instance().add_test("Something Test", []() {
-        std::cout << "Hello from the test running!" << std::endl;
-    });
-});
+// Test("second test") {
+
+// }
