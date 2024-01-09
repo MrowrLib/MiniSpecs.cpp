@@ -2,7 +2,9 @@
 
 # `<MiniSpecs>`
 
-Mini C++ Test Framework
+> Mini C++ Test Framework
+
+_For `C++11` and beyond!_
 
 ```cpp
 #define SPEC_GROUP My_Tests
@@ -13,7 +15,6 @@ Setup { /* Setup Code */ }
 Teardown { /* Teardown Code */ }
  
 Test("Some thing") {
-    assert_that(69 == 420);
     AssertThat(69, Equals(420));
 }
 ```
