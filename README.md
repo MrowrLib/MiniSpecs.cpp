@@ -1,4 +1,4 @@
-<img src="Resources/Images/eyeglasses-35598_1280.png" align="right" width=100>
+<img src="Resources/Images/eyeglasses-35598_1280.png" align="right" width=150>
 
 # `<MiniSpecs>`
 
