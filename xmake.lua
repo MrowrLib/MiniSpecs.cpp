@@ -5,4 +5,6 @@ if not is_plat("windows") then
     add_rules("plugin.compile_commands.autoupdate", { outputdir = "compile_commands" })
 end
 
+add_repositories("MrowrLib https://github.com/MrowrLib/Packages.git")
+
 includes("*/xmake.lua")
