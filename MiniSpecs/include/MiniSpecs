@@ -1,6 +1,4 @@
-#include <iostream>
+#pragma once
 
-int main() {
-    std::cout << "Hello from MiniSpecs!" << std::endl;
-    return 0;
-}
+#include "MiniSpecsCpp/DSL.h"
+#include "MiniSpecsCpp/Entrypoint.h"
