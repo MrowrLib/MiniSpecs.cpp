@@ -30,4 +30,21 @@
     });                                                                              \
     void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)()
 
+#define _MiniSpecs_SetupOrTeardownDefinitionAndRegistration(typeSymbol, adderFunction, count) \
+    void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(typeSymbol, count)();               \
+    MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(            \
+        _MiniSpec_FunctionRunner_, count                                                      \
+    )([]() {                                                                                  \
+        MiniSpecsCpp::SpecRegistry::instance().adderFunction(                                 \
+            _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(typeSymbol, count)               \
+        );                                                                                    \
+    });                                                                                       \
+    void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(typeSymbol, count)
+
 #define Test(textDescription) _MiniSpecs_TestDefinitionAndRegistration(textDescription, __COUNTER__)
+#define Setup \
+    _MiniSpecs_SetupOrTeardownDefinitionAndRegistration(_MiniSpec_Setup_, add_setup, __COUNTER__)()
+#define Teardown                                         \
+    _MiniSpecs_SetupOrTeardownDefinitionAndRegistration( \
+        _MiniSpec_Teardown_, add_teardown, __COUNTER__   \
+    )()
