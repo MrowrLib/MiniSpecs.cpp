@@ -2,12 +2,12 @@
 
 #include "TestHelper.h"
 
-Setup { cout << "111 Setup 1" << endl; }
-Teardown { cout << "111 Teardown 1" << endl; }
-Test("Test 1") { cout << "111 RUN Test 1" << endl; }
+Setup {}
+Teardown {}
+Test("Test 1") { AssertThat(1, Equals(2)); }
 
 Group("C");
 
-Setup { cout << "C Setup 1" << endl; }
-Teardown { cout << "C Teardown 1" << endl; }
-Test("Test 1") { cout << "C RUN Test 1" << endl; }
+Setup {}
+Teardown {}
+Test("Test 1") { throw "BOOM!"; }

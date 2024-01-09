@@ -48,6 +48,29 @@ namespace MiniSpecsCpp {
             return errorMessages;
         }
 
+        constexpr static auto COLOR_RED    = "31";
+        constexpr static auto COLOR_GREEN  = "32";
+        constexpr static auto COLOR_YELLOW = "33";
+        constexpr static auto COLOR_BLUE   = "34";
+        constexpr static auto COLOR_PURPLE = "35";
+        constexpr static auto COLOR_CYAN   = "36";
+
+        void print_color(const std::string& text, const std::string& color) {
+            std::cout << "\033[" << color << "m" << text << "\033[0m";
+        }
+
+        void print_color(std::vector<std::string> textParts, const std::string& color) {
+            std::cout << "\033[" << color << "m";
+            for (auto& textPart : textParts) std::cout << textPart;
+            std::cout << "\033[0m";
+        }
+
+        void print(const std::string& text) { std::cout << text; }
+
+        void print(std::vector<std::string> textParts) {
+            for (auto& textPart : textParts) std::cout << textPart;
+        }
+
     public:
         SpecSuiteRunner(SpecRegistry& registry) : _registry(registry) {}
 
@@ -55,9 +78,9 @@ namespace MiniSpecsCpp {
             unsigned int passed_count = 0;
             unsigned int failed_count = 0;
             for (auto& group : _registry.spec_groups()) {
-                if (!group.name.empty()) std::cout << "[" << group.name << "]" << std::endl;
+                if (!group.name.empty()) print_color({"[" + group.name + "]\n"}, COLOR_BLUE);
                 for (auto& spec : group.specs) {
-                    std::cout << "Running " << spec.name << std::endl;
+                    print_color({"> ", spec.name, "\n"}, COLOR_CYAN);
                     auto errorMessage = run_setups(group.setups);
                     if (errorMessage.empty()) errorMessage = run_function(spec.test_body_function);
                     auto teardownErrorMessages = run_teardowns(group.teardowns);
@@ -66,25 +89,32 @@ namespace MiniSpecsCpp {
                             teardownErrorMessages.begin(), teardownErrorMessages.end(),
                             [](const std::string& s) { return !s.empty(); }
                         )) {
-                        std::cout << "Failed: " << spec.name << std::endl;
-                        if (!errorMessage.empty()) std::cout << "  " << errorMessage << std::endl;
+                        print_color({"  Failed: ", spec.name, "\n"}, COLOR_RED);
+                        if (!errorMessage.empty())
+                            print_color({"  ", errorMessage, "\n"}, COLOR_YELLOW);
                         for (auto& teardownErrorMessage : teardownErrorMessages)
                             if (!teardownErrorMessage.empty())
-                                std::cout << "  " << teardownErrorMessage << std::endl;
+                                print_color({"  ", teardownErrorMessage, "\n"}, COLOR_YELLOW);
                         failed_count++;
                     } else {
-                        std::cout << "Passed: " << spec.name << std::endl;
+                        print_color({"  Passed: ", spec.name, "\n"}, COLOR_GREEN);
                         passed_count++;
                     }
                 }
             }
             std::cout << std::endl;
             if (failed_count > 0)
-                std::cout << "Failed " << failed_count << " of " << passed_count + failed_count
-                          << std::endl;
+                print_color(
+                    {"Failed ", std::to_string(failed_count), " of ",
+                     std::to_string(passed_count + failed_count), "\n"},
+                    COLOR_RED
+                );
             else
-                std::cout << "Passed " << passed_count << " of " << passed_count + failed_count
-                          << std::endl;
+                print_color(
+                    {"Passed ", std::to_string(passed_count), " of ",
+                     std::to_string(passed_count + failed_count), "\n"},
+                    COLOR_GREEN
+                );
         }
     };
 }
