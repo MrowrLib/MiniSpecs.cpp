@@ -1,0 +1,8 @@
+build
+.idea
+cmake-build*
+.vs
+*.pdb
+.vscode/settings.json
+.xmake
+compile_commands
