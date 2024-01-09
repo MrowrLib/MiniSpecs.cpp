@@ -1,4 +1,3 @@
 #pragma once
 
 #include "MiniSpecsCpp/DSL.h"
-#include "MiniSpecsCpp/Entrypoint.h"
