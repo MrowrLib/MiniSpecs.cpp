@@ -15,7 +15,7 @@ namespace MiniSpecsCpp {
 
     class SpecSuiteRunner {
         SpecRegistry&            _registry;
-        unsigned int             _timeout_ms = 1000;
+        unsigned int             _timeout_ms = 5000;
         std::vector<std::string> _include_filters;
         std::vector<std::string> _exclude_filters;
         std::vector<std::string> _include_regex_filters;
@@ -187,18 +187,19 @@ namespace MiniSpecsCpp {
                         i++;
                     }
                 } else if (arg == "--version" || arg == "-v") {
-                    print(Version::get());
+                    print({"MiniSpecs: ", Version::get(), " by Mrowr Purr\n"});
                     exit(0);
                 } else if (arg == "--help" || arg == "-h") {
                     print(
                         {"MiniSpecs: ", Version::get(), " by Mrowr Purr\n\n", "Usage: ", argv[0],
                          " [options]\n\n", "Options:\n",
-                         "  -t, --timeout <ms>  Set timeout in milliseconds (default: 1000)\n",
+                         "  -t, --timeout <ms>  Set timeout in milliseconds (default: 5000)\n",
                          "  -i, --include <re>  Run only specs matching the regular expression\n",
                          "  -e, --exclude <re>  Skip specs matching the regular expression\n",
                          "  -I, --include-regex <re>  Run only specs matching the regular expression\n",
                          "  -E, --exclude-regex <re>  Skip specs matching the regular expression\n",
-                         "  -h, --help          Show this help\n"}
+                         "  -h, --help          Show this help\n",
+                         "  -v, --version       Show version\n"}
                     );
                     exit(0);
                 }
