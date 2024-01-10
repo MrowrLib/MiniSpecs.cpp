@@ -40,6 +40,17 @@ using SpecDone = MiniSpecsCpp::Done;
     });                                                                                       \
     void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(typeSymbol, count)
 
+#define _MiniSpecs_AsyncSetupOrTeardownDefinitionAndRegistration(typeSymbol, adderFunction, count) \
+    void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(typeSymbol, count)(SpecDone done);       \
+    MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(                 \
+        _MiniSpec_SetupOrTeardownDefinitionFunctionRunner_, count                                  \
+    )([]() {                                                                                       \
+        MiniSpecsCpp::SpecRegistry::instance().adderFunction(                                      \
+            _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(typeSymbol, count)                    \
+        );                                                                                         \
+    });                                                                                            \
+    void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(typeSymbol, count)
+
 #define _MiniSpecs_AsyncTestDefinitionAndRegistration(textDescription, count)                     \
     void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)(SpecDone done); \
     MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(                \
@@ -50,7 +61,7 @@ using SpecDone = MiniSpecsCpp::Done;
             _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)              \
         );                                                                                        \
     });                                                                                           \
-    void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)(SpecDone done)
+    void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)
 
 #define _MiniSpecs_DefineGroup(name, count)                                        \
     MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter( \
@@ -60,15 +71,25 @@ using SpecDone = MiniSpecsCpp::Done;
 #define Test(textDescription) _MiniSpecs_TestDefinitionAndRegistration(textDescription, __COUNTER__)
 
 #define TestAsync(textDescription) \
-    _MiniSpecs_AsyncTestDefinitionAndRegistration(textDescription, __COUNTER__)
+    _MiniSpecs_AsyncTestDefinitionAndRegistration(textDescription, __COUNTER__)(SpecDone done)
 
 #define Setup \
     _MiniSpecs_SetupOrTeardownDefinitionAndRegistration(_MiniSpec_Setup_, add_setup, __COUNTER__)()
+
+#define SetupAsync                                            \
+    _MiniSpecs_AsyncSetupOrTeardownDefinitionAndRegistration( \
+        _MiniSpec_Setup_, add_setup, __COUNTER__              \
+    )(SpecDone done)
 
 #define Teardown                                         \
     _MiniSpecs_SetupOrTeardownDefinitionAndRegistration( \
         _MiniSpec_Teardown_, add_teardown, __COUNTER__   \
     )()
+
+#define TeardownAsync                                         \
+    _MiniSpecs_AsyncSetupOrTeardownDefinitionAndRegistration( \
+        _MiniSpec_Teardown_, add_teardown, __COUNTER__        \
+    )(SpecDone done)
 
 #define Group(name) _MiniSpecs_DefineGroup(name, __COUNTER__)
 

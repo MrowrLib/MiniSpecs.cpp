@@ -41,7 +41,15 @@ namespace MiniSpecsCpp {
             current_spec_group()->setups.emplace_back(setup);
         }
 
+        void add_setup(std::function<void(Done done)> setup) {
+            current_spec_group()->setups.emplace_back(setup);
+        }
+
         void add_teardown(std::function<void()> teardown) {
+            current_spec_group()->teardowns.emplace_back(teardown);
+        }
+
+        void add_teardown(std::function<void(Done done)> teardown) {
             current_spec_group()->teardowns.emplace_back(teardown);
         }
 

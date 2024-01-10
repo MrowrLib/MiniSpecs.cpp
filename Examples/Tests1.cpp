@@ -2,6 +2,16 @@
 
 #include "TestHelper.h"
 
+SetupAsync {
+    // ....
+    done();
+}
+
+TeardownAsync {
+    // ....
+    done();
+}
+
 TestAsync("An async test") {
     // ....
     done();
