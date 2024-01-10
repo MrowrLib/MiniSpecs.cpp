@@ -1,5 +1,6 @@
 #pragma once
 
+#include <future>
 #include <vector>
 
 #include "SpecRegistry.h"
@@ -16,7 +17,16 @@ namespace MiniSpecsCpp {
         std::string run(Runnable& runnable) {
             std::string errorMessage;
             try {
-                runnable();  // TODO: pass a Done
+                if (runnable.is_async()) {
+                    std::promise<void> promise;
+                    std::future<void>  future = promise.get_future();
+                    auto               done   = Done(promise);
+                    runnable(&done);
+                    if (future.wait_for(std::chrono::milliseconds(1000)) ==
+                        std::future_status::timeout) {
+                        errorMessage = "Timeout";
+                    }
+                } else runnable();
 #if __has_include(<snowhouse/snowhouse.h>)
             } catch (const snowhouse::AssertionException& e) {
                 errorMessage = e.what() + std::string(" (") + e.file() + std::string(":") +

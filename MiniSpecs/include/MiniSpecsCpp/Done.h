@@ -1,10 +1,15 @@
 #pragma once
 
-#include <iostream>
+#include <future>
 
 namespace MiniSpecsCpp {
 
-    struct Done {
-        void operator()() const { std::cout << "You Called Done!" << std::endl; }
+    class Done {
+        std::promise<void>& _promise;
+
+    public:
+        Done(std::promise<void>& promise) : _promise(promise) {}
+
+        void operator()() const { _promise.set_value(); }
     };
 }
