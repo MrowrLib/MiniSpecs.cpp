@@ -8,6 +8,7 @@
 namespace MiniSpecsCpp {
 
     class Runnable {
+        bool                                       _skip           = false;
         bool                                       _is_async       = false;
         std::unique_ptr<std::function<void()>>     _function       = nullptr;
         std::unique_ptr<std::function<void(Done)>> _async_function = nullptr;
@@ -25,6 +26,8 @@ namespace MiniSpecsCpp {
               )) {}
 
         bool is_async() const { return _is_async; }
+        bool should_skip() const { return _skip; }
+        void skip(bool value = true) { _skip = value; }
 
         void operator()(Done* done = nullptr) {
             if (_is_async) (*_async_function)(*done);

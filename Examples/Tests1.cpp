@@ -12,7 +12,12 @@ TeardownAsync {
     done();
 }
 
+// Skip
 TestAsync("An async test") {
     // ....
     done();
 }
+
+// Test("Foo") { throw "BOOM!"; }
+Test("Bar") {}
+Test("Baz") {}

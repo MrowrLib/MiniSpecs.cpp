@@ -12,6 +12,13 @@ namespace MiniSpecsCpp {
     class SpecRegistry {
         std::vector<SpecGroup> _spec_groups;
         SpecGroup*             _current_spec_group;
+        bool                   _skip_next = false;
+
+        bool should_skip_next() {
+            bool result = _skip_next;
+            _skip_next  = false;
+            return result;
+        }
 
     public:
         static SpecRegistry& instance() {
@@ -29,33 +36,42 @@ namespace MiniSpecsCpp {
             return _current_spec_group;
         }
 
-        void add_test(std::string name, std::function<void()> test) {
-            current_spec_group()->specs.emplace_back(name, test);
+        void add_spec(std::string name, std::function<void()> fn) {
+            auto& spec = current_spec_group()->add_spec(name, fn);
+            if (should_skip_next()) spec.skip();
         }
 
-        void add_test(std::string name, std::function<void(Done done)> test) {
-            current_spec_group()->specs.emplace_back(name, test);
+        void add_spec(std::string name, std::function<void(Done done)> fn) {
+            auto& spec = current_spec_group()->add_spec(name, fn);
+            if (should_skip_next()) spec.skip();
         }
 
-        void add_setup(std::function<void()> setup) {
-            current_spec_group()->setups.emplace_back(setup);
+        void add_setup(std::function<void()> fn) {
+            auto& setup = current_spec_group()->add_setup(fn);
+            if (should_skip_next()) setup.skip();
         }
 
-        void add_setup(std::function<void(Done done)> setup) {
-            current_spec_group()->setups.emplace_back(setup);
+        void add_setup(std::function<void(Done done)> fn) {
+            auto& setup = current_spec_group()->add_setup(fn);
+            if (should_skip_next()) setup.skip();
         }
 
-        void add_teardown(std::function<void()> teardown) {
-            current_spec_group()->teardowns.emplace_back(teardown);
+        void add_teardown(std::function<void()> fn) {
+            auto& teardown = current_spec_group()->add_teardown(fn);
+            if (should_skip_next()) teardown.skip();
         }
 
-        void add_teardown(std::function<void(Done done)> teardown) {
-            current_spec_group()->teardowns.emplace_back(teardown);
+        void add_teardown(std::function<void(Done done)> fn) {
+            auto& teardown = current_spec_group()->add_teardown(fn);
+            if (should_skip_next()) teardown.skip();
         }
 
         void add_group(std::string name) {
             _spec_groups.emplace_back(SpecGroup{name});
             _current_spec_group = &_spec_groups.back();
+            if (should_skip_next()) _current_spec_group->skip();
         }
+
+        void skip_next() { _skip_next = true; }
     };
 }

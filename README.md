@@ -1,9 +1,9 @@
 # TODO
 
-- [ ] `Async` tests
+- [x] `Async` tests
 - [ ] CMake/vcpkg demo
 - [ ] xmake/xrepo demo
-- [ ] Can `Skip` tests
+- [x] Can `Skip` tests
 - [ ] Can run only certain tests from CLI
 - [ ] Can exclude only certain tests from CLI
 

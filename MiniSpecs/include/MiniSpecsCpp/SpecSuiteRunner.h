@@ -57,12 +57,13 @@ namespace MiniSpecsCpp {
             return errorMessages;
         }
 
-        constexpr static auto COLOR_RED    = "31";
-        constexpr static auto COLOR_GREEN  = "32";
-        constexpr static auto COLOR_YELLOW = "33";
-        constexpr static auto COLOR_BLUE   = "34";
-        constexpr static auto COLOR_PURPLE = "35";
-        constexpr static auto COLOR_CYAN   = "36";
+        constexpr static auto COLOR_NORMAL          = "0";
+        constexpr static auto COLOR_FAIL            = "31";
+        constexpr static auto COLOR_PASS            = "32";
+        constexpr static auto COLOR_FAILURE_MESSAGE = "33";
+        constexpr static auto COLOR_GROUP_NAME      = "34";
+        constexpr static auto COLOR_SPEC_NAME       = "36";
+        constexpr static auto COLOR_NOT_RUN         = "35";  // try 37
 
         void print_color(const std::string& text, const std::string& color) {
             std::cout << "\033[" << color << "m" << text << "\033[0m";
@@ -84,46 +85,60 @@ namespace MiniSpecsCpp {
         SpecSuiteRunner(SpecRegistry& registry) : _registry(registry) {}
 
         void run() {
-            unsigned int passed_count = 0;
-            unsigned int failed_count = 0;
+            unsigned int passed_count  = 0;
+            unsigned int failed_count  = 0;
+            unsigned int skipped_count = 0;
             for (auto& group : _registry.spec_groups()) {
-                if (!group.name.empty()) print_color({"[" + group.name + "]\n"}, COLOR_BLUE);
-                for (auto& spec : group.specs) {
-                    print_color({"> ", spec.name(), "\n"}, COLOR_CYAN);
-                    auto errorMessage = run_setups(group.setups);
+                auto group_color = group.should_skip() ? COLOR_NOT_RUN : COLOR_GROUP_NAME;
+                if (group.should_skip()) print_color("[SKIP] ", COLOR_NOT_RUN);
+                if (!group.name().empty()) print_color({"[" + group.name() + "]\n"}, group_color);
+                for (auto& spec : group.specs()) {
+                    bool should_skip = group.should_skip() || spec.should_skip();
+                    auto spec_color  = should_skip ? COLOR_NOT_RUN : COLOR_SPEC_NAME;
+                    if (should_skip) print_color("[SKIP] ", COLOR_NOT_RUN);
+                    print_color({"> ", spec.name(), "\n"}, spec_color);
+                    if (group.should_skip() || spec.should_skip()) {
+                        skipped_count++;
+                        continue;
+                    }
+                    auto errorMessage = run_setups(group.setups());
                     if (errorMessage.empty()) errorMessage = run(spec);
-                    auto teardownErrorMessages = run_teardowns(group.teardowns);
+                    auto teardownErrorMessages = run_teardowns(group.teardowns());
                     if (!errorMessage.empty() ||
                         std::any_of(
                             teardownErrorMessages.begin(), teardownErrorMessages.end(),
                             [](const std::string& s) { return !s.empty(); }
                         )) {
-                        print_color({"  Failed: ", spec.name(), "\n"}, COLOR_RED);
+                        print_color({"  Failed: ", spec.name(), "\n"}, COLOR_FAIL);
                         if (!errorMessage.empty())
-                            print_color({"  ", errorMessage, "\n"}, COLOR_YELLOW);
+                            print_color({"  ", errorMessage, "\n"}, COLOR_FAILURE_MESSAGE);
                         for (auto& teardownErrorMessage : teardownErrorMessages)
                             if (!teardownErrorMessage.empty())
-                                print_color({"  ", teardownErrorMessage, "\n"}, COLOR_YELLOW);
+                                print_color(
+                                    {"  ", teardownErrorMessage, "\n"}, COLOR_FAILURE_MESSAGE
+                                );
                         failed_count++;
                     } else {
-                        print_color({"  Passed: ", spec.name(), "\n"}, COLOR_GREEN);
+                        print_color({"  Passed: ", spec.name(), "\n"}, COLOR_PASS);
                         passed_count++;
                     }
                 }
             }
-            std::cout << std::endl;
+            print("\n");
+            if (failed_count > 0) print_color("Failed", COLOR_FAIL);
+            else if (passed_count > 0) print_color("Passed", COLOR_PASS);
+            else print_color("No tests run", COLOR_NOT_RUN);
+            print_color(":", COLOR_NORMAL);
+            if (passed_count > 0)
+                print_color({" ", std::to_string(passed_count), " passed"}, COLOR_PASS);
+            if (passed_count > 0 && failed_count > 0) print_color(",", COLOR_NORMAL);
             if (failed_count > 0)
-                print_color(
-                    {"Failed ", std::to_string(failed_count), " of ",
-                     std::to_string(passed_count + failed_count), "\n"},
-                    COLOR_RED
-                );
-            else
-                print_color(
-                    {"Passed ", std::to_string(passed_count), " of ",
-                     std::to_string(passed_count + failed_count), "\n"},
-                    COLOR_GREEN
-                );
+                print_color({" ", std::to_string(failed_count), " failed"}, COLOR_FAIL);
+            if ((passed_count > 0 || failed_count > 0) && skipped_count > 0)
+                print_color(",", COLOR_NORMAL);
+            if (skipped_count > 0)
+                print_color({" ", std::to_string(skipped_count), " skipped"}, COLOR_NOT_RUN);
+            print_color(".\n", COLOR_NORMAL);
         }
     };
 }

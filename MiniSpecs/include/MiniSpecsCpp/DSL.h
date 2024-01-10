@@ -22,7 +22,7 @@ using SpecDone = MiniSpecsCpp::Done;
     MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(   \
         _MiniSpec_TestDefinitionFunctionRunner_, count                               \
     )([]() {                                                                         \
-        MiniSpecsCpp::SpecRegistry::instance().add_test(                             \
+        MiniSpecsCpp::SpecRegistry::instance().add_spec(                             \
             textDescription,                                                         \
             _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count) \
         );                                                                           \
@@ -56,17 +56,22 @@ using SpecDone = MiniSpecsCpp::Done;
     MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(                \
         _MiniSpec_TestDefinitionFunctionRunner_, count                                            \
     )([]() {                                                                                      \
-        MiniSpecsCpp::SpecRegistry::instance().add_test(                                          \
+        MiniSpecsCpp::SpecRegistry::instance().add_spec(                                          \
             textDescription,                                                                      \
             _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)              \
         );                                                                                        \
     });                                                                                           \
     void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)
 
-#define _MiniSpecs_DefineGroup(name, count)                                        \
+#define _MiniSpecs_DefineGroup(symbol, name, count)                                \
     MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter( \
-        _MiniSpec_DefineGroupFunctionRunner_, count                                \
+        symbol, count                                                              \
     )([]() { MiniSpecsCpp::SpecRegistry::instance().add_group(name); });
+
+#define _MiniSpecs_Skip(symbol, count)                                             \
+    MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter( \
+        symbol, count                                                              \
+    )([]() { MiniSpecsCpp::SpecRegistry::instance().skip_next(); });
 
 #define Test(textDescription) _MiniSpecs_TestDefinitionAndRegistration(textDescription, __COUNTER__)
 
@@ -91,13 +96,22 @@ using SpecDone = MiniSpecsCpp::Done;
         _MiniSpec_Teardown_, add_teardown, __COUNTER__        \
     )(SpecDone done)
 
-#define Group(name) _MiniSpecs_DefineGroup(name, __COUNTER__)
+#define Group(name) _MiniSpecs_DefineGroup(_MiniSpecs_Group_, name, __COUNTER__)
+
+#define Skip _MiniSpecs_Skip(_MiniSpecs_Skip_, __COUNTER__)
 
 #ifdef SPEC_FILE
     #define _MiniSpecs_CompilationUnitID SPEC_FILE
 #elif defined(SPEC_GROUP)
     #define _MiniSpecs_CompilationUnitID SPEC_GROUP
-Group(_MiniSpecs_Stringize(_MiniSpecs_CompilationUnitID));
+_MiniSpecs_DefineGroup(
+    _MiniSpecs_TopLevelGroup_, _MiniSpecs_Stringize(_MiniSpecs_CompilationUnitID), __COUNTER__
+);
+#elif defined(SKIP_SPEC_GROUP)
+    #define _MiniSpecs_CompilationUnitID SKIP_SPEC_GROUP
+_MiniSpecs_Skip(_MiniSpecs_TopLevelSkip_, __COUNTER__) _MiniSpecs_DefineGroup(
+    _MiniSpecs_TopLevelGroup_, _MiniSpecs_Stringize(_MiniSpecs_CompilationUnitID), __COUNTER__
+);
 #else
     #define _MiniSpecs_CompilationUnitID DefaultMiniSpecsCompilationUnit
 #endif
