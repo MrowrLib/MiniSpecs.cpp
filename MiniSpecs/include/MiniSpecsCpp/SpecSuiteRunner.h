@@ -13,10 +13,10 @@ namespace MiniSpecsCpp {
     class SpecSuiteRunner {
         SpecRegistry& _registry;
 
-        std::string run_function(std::function<void()> function) {
+        std::string run(Runnable& runnable) {
             std::string errorMessage;
             try {
-                function();
+                runnable();  // TODO: pass a Done
 #if __has_include(<snowhouse/snowhouse.h>)
             } catch (const snowhouse::AssertionException& e) {
                 errorMessage = e.what() + std::string(" (") + e.file() + std::string(":") +
@@ -35,7 +35,7 @@ namespace MiniSpecsCpp {
         std::string run_setups(std::vector<Setup>& setups) {
             std::string errorMessage;
             for (auto& setup : setups) {
-                errorMessage = run_function(setup.body_function);
+                errorMessage = run(setup);
                 if (!errorMessage.empty()) break;
             }
             return errorMessage;
@@ -43,8 +43,7 @@ namespace MiniSpecsCpp {
 
         std::vector<std::string> run_teardowns(std::vector<Teardown>& teardowns) {
             std::vector<std::string> errorMessages;
-            for (auto& teardown : teardowns)
-                errorMessages.emplace_back(run_function(teardown.body_function));
+            for (auto& teardown : teardowns) errorMessages.emplace_back(run(teardown));
             return errorMessages;
         }
 
@@ -80,16 +79,16 @@ namespace MiniSpecsCpp {
             for (auto& group : _registry.spec_groups()) {
                 if (!group.name.empty()) print_color({"[" + group.name + "]\n"}, COLOR_BLUE);
                 for (auto& spec : group.specs) {
-                    print_color({"> ", spec.name, "\n"}, COLOR_CYAN);
+                    print_color({"> ", spec.name(), "\n"}, COLOR_CYAN);
                     auto errorMessage = run_setups(group.setups);
-                    if (errorMessage.empty()) errorMessage = run_function(spec.test_body_function);
+                    if (errorMessage.empty()) errorMessage = run(spec);
                     auto teardownErrorMessages = run_teardowns(group.teardowns);
                     if (!errorMessage.empty() ||
                         std::any_of(
                             teardownErrorMessages.begin(), teardownErrorMessages.end(),
                             [](const std::string& s) { return !s.empty(); }
                         )) {
-                        print_color({"  Failed: ", spec.name, "\n"}, COLOR_RED);
+                        print_color({"  Failed: ", spec.name(), "\n"}, COLOR_RED);
                         if (!errorMessage.empty())
                             print_color({"  ", errorMessage, "\n"}, COLOR_YELLOW);
                         for (auto& teardownErrorMessage : teardownErrorMessages)
@@ -97,7 +96,7 @@ namespace MiniSpecsCpp {
                                 print_color({"  ", teardownErrorMessage, "\n"}, COLOR_YELLOW);
                         failed_count++;
                     } else {
-                        print_color({"  Passed: ", spec.name, "\n"}, COLOR_GREEN);
+                        print_color({"  Passed: ", spec.name(), "\n"}, COLOR_GREEN);
                         passed_count++;
                     }
                 }

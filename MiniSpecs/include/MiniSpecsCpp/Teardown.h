@@ -1,10 +1,12 @@
 #pragma once
 
-#include <functional>
+#include "Runnable.h"
 
 namespace MiniSpecsCpp {
 
-    struct Teardown {
-        std::function<void()> body_function;
+    class Teardown : public Runnable {
+    public:
+        Teardown(std::function<void()> function) : Runnable(function) {}
+        Teardown(std::function<void(Done)> function) : Runnable(function) {}
     };
 }

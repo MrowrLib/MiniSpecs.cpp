@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "Done.h"
 #include "SpecGroup.h"
 
 namespace MiniSpecsCpp {
@@ -29,15 +30,19 @@ namespace MiniSpecsCpp {
         }
 
         void add_test(std::string name, std::function<void()> test) {
-            current_spec_group()->specs.emplace_back(Spec{name, test});
+            current_spec_group()->specs.emplace_back(name, test);
+        }
+
+        void add_test(std::string name, std::function<void(Done done)> test) {
+            current_spec_group()->specs.emplace_back(name, test);
         }
 
         void add_setup(std::function<void()> setup) {
-            current_spec_group()->setups.emplace_back(Setup{setup});
+            current_spec_group()->setups.emplace_back(setup);
         }
 
         void add_teardown(std::function<void()> teardown) {
-            current_spec_group()->teardowns.emplace_back(Teardown{teardown});
+            current_spec_group()->teardowns.emplace_back(teardown);
         }
 
         void add_group(std::string name) {

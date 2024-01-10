@@ -3,6 +3,8 @@
 #include "FunctionRunner.h"
 #include "SpecRegistry.h"
 
+using SpecDone = MiniSpecsCpp::Done;
+
 #define _MiniSpecs_Stringize_Simple(symbol) #symbol
 #define _MiniSpecs_Stringize(symbol) _MiniSpecs_Stringize_Simple(symbol)
 
@@ -38,12 +40,27 @@
     });                                                                                       \
     void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(typeSymbol, count)
 
+#define _MiniSpecs_AsyncTestDefinitionAndRegistration(textDescription, count)                     \
+    void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)(SpecDone done); \
+    MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(                \
+        _MiniSpec_TestDefinitionFunctionRunner_, count                                            \
+    )([]() {                                                                                      \
+        MiniSpecsCpp::SpecRegistry::instance().add_test(                                          \
+            textDescription,                                                                      \
+            _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)              \
+        );                                                                                        \
+    });                                                                                           \
+    void _MiniSpecs_ConcatWithCompilationUnitIDAndCounter(_MiniSpec_Test_, count)(SpecDone done)
+
 #define _MiniSpecs_DefineGroup(name, count)                                        \
     MiniSpecsCpp::FunctionRunner _MiniSpecs_ConcatWithCompilationUnitIDAndCounter( \
         _MiniSpec_DefineGroupFunctionRunner_, count                                \
     )([]() { MiniSpecsCpp::SpecRegistry::instance().add_group(name); });
 
 #define Test(textDescription) _MiniSpecs_TestDefinitionAndRegistration(textDescription, __COUNTER__)
+
+#define TestAsync(textDescription) \
+    _MiniSpecs_AsyncTestDefinitionAndRegistration(textDescription, __COUNTER__)
 
 #define Setup \
     _MiniSpecs_SetupOrTeardownDefinitionAndRegistration(_MiniSpec_Setup_, add_setup, __COUNTER__)()
