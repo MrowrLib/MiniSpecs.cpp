@@ -16,6 +16,7 @@ PointerAlignment: Left
 ReferenceAlignment: Left
 AlignAfterOpenBracket: BlockIndent
 AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+BreakStringLiterals: false
 # SpaceBeforeParens: ControlStatements
 SpaceBeforeParens: Custom
 SpaceBeforeParensOptions:
