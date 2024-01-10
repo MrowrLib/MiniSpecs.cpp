@@ -4,8 +4,8 @@
 - [ ] CMake/vcpkg demo
 - [ ] xmake/xrepo demo
 - [x] Can `Skip` tests
-- [ ] Can run only certain tests from CLI
-- [ ] Can exclude only certain tests from CLI
+- [x] Can run only certain tests from CLI
+- [x] Can exclude only certain tests from CLI
 
 ---
 
@@ -27,5 +27,10 @@ Teardown { /* Teardown Code */ }
  
 Test("Some thing") {
     AssertThat(69, Equals(420));
+}
+
+TestAsync("Slow thing") {
+    // Do something slow...
+    done();
 }
 ```

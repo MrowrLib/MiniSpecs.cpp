@@ -1,9 +1,11 @@
 #pragma once
 
 #include <future>
+#include <regex>
 #include <vector>
 
 #include "SpecRegistry.h"
+#include "Version.h"
 
 #if __has_include(<snowhouse/snowhouse.h>)
     #include <snowhouse/snowhouse.h>
@@ -12,7 +14,42 @@
 namespace MiniSpecsCpp {
 
     class SpecSuiteRunner {
-        SpecRegistry& _registry;
+        SpecRegistry&            _registry;
+        unsigned int             _timeout_ms = 1000;
+        std::vector<std::string> _include_filters;
+        std::vector<std::string> _exclude_filters;
+        std::vector<std::string> _include_regex_filters;
+        std::vector<std::string> _exclude_regex_filters;
+
+        bool should_run(const std::string& name) {
+            if (!_exclude_filters.empty()) {
+                for (auto& filter : _exclude_filters)
+                    if (name.find(filter) != std::string::npos) return false;
+            }
+            if (!_exclude_regex_filters.empty()) {
+                for (auto& filter : _exclude_regex_filters)
+                    if (std::regex_match(name, std::regex(filter))) return false;
+            }
+            if (!_include_filters.empty()) {
+                bool should_run = false;
+                for (auto& filter : _include_filters)
+                    if (name.find(filter) != std::string::npos) {
+                        should_run = true;
+                        break;
+                    }
+                if (!should_run) return false;
+            }
+            if (!_include_regex_filters.empty()) {
+                bool should_run = false;
+                for (auto& filter : _include_regex_filters)
+                    if (std::regex_match(name, std::regex(filter))) {
+                        should_run = true;
+                        break;
+                    }
+                if (!should_run) return false;
+            }
+            return true;
+        }
 
         std::string run(Runnable& runnable) {
             std::string errorMessage;
@@ -22,7 +59,7 @@ namespace MiniSpecsCpp {
                     std::future<void>  future = promise.get_future();
                     auto               done   = Done(promise);
                     runnable(&done);
-                    if (future.wait_for(std::chrono::milliseconds(1000)) ==
+                    if (future.wait_for(std::chrono::milliseconds(_timeout_ms)) ==
                         std::future_status::timeout) {
                         errorMessage = "Timeout";
                     }
@@ -81,49 +118,29 @@ namespace MiniSpecsCpp {
             for (auto& textPart : textParts) std::cout << textPart;
         }
 
-    public:
-        SpecSuiteRunner(SpecRegistry& registry) : _registry(registry) {}
-
-        void run() {
-            unsigned int passed_count  = 0;
-            unsigned int failed_count  = 0;
-            unsigned int skipped_count = 0;
-            for (auto& group : _registry.spec_groups()) {
-                auto group_color = group.should_skip() ? COLOR_NOT_RUN : COLOR_GROUP_NAME;
-                if (group.should_skip()) print_color("[SKIP] ", COLOR_NOT_RUN);
-                if (!group.name().empty()) print_color({"[" + group.name() + "]\n"}, group_color);
-                for (auto& spec : group.specs()) {
-                    bool should_skip = group.should_skip() || spec.should_skip();
-                    auto spec_color  = should_skip ? COLOR_NOT_RUN : COLOR_SPEC_NAME;
-                    if (should_skip) print_color("[SKIP] ", COLOR_NOT_RUN);
-                    print_color({"> ", spec.name(), "\n"}, spec_color);
-                    if (group.should_skip() || spec.should_skip()) {
-                        skipped_count++;
-                        continue;
-                    }
-                    auto errorMessage = run_setups(group.setups());
-                    if (errorMessage.empty()) errorMessage = run(spec);
-                    auto teardownErrorMessages = run_teardowns(group.teardowns());
-                    if (!errorMessage.empty() ||
-                        std::any_of(
-                            teardownErrorMessages.begin(), teardownErrorMessages.end(),
-                            [](const std::string& s) { return !s.empty(); }
-                        )) {
-                        print_color({"  Failed: ", spec.name(), "\n"}, COLOR_FAIL);
-                        if (!errorMessage.empty())
-                            print_color({"  ", errorMessage, "\n"}, COLOR_FAILURE_MESSAGE);
-                        for (auto& teardownErrorMessage : teardownErrorMessages)
-                            if (!teardownErrorMessage.empty())
-                                print_color(
-                                    {"  ", teardownErrorMessage, "\n"}, COLOR_FAILURE_MESSAGE
-                                );
-                        failed_count++;
-                    } else {
-                        print_color({"  Passed: ", spec.name(), "\n"}, COLOR_PASS);
-                        passed_count++;
-                    }
-                }
+        void print_spec_result(
+            const std::string& specName, const std::string& errorMessage,
+            const std::vector<std::string>& teardownErrorMessages
+        ) {
+            if (!errorMessage.empty() ||
+                std::any_of(
+                    teardownErrorMessages.begin(), teardownErrorMessages.end(),
+                    [](const std::string& s) { return !s.empty(); }
+                )) {
+                print_color({"  Failed: ", specName, "\n"}, COLOR_FAIL);
+                if (!errorMessage.empty())
+                    print_color({"  ", errorMessage, "\n"}, COLOR_FAILURE_MESSAGE);
+                for (auto& teardownErrorMessage : teardownErrorMessages)
+                    if (!teardownErrorMessage.empty())
+                        print_color({"  ", teardownErrorMessage, "\n"}, COLOR_FAILURE_MESSAGE);
+            } else {
+                print_color({"  Passed: ", specName, "\n"}, COLOR_PASS);
             }
+        }
+
+        void print_suite_results(
+            unsigned int passed_count, unsigned int failed_count, unsigned int skipped_count
+        ) {
             print("\n");
             if (failed_count > 0) print_color("Failed", COLOR_FAIL);
             else if (passed_count > 0) print_color("Passed", COLOR_PASS);
@@ -139,6 +156,108 @@ namespace MiniSpecsCpp {
             if (skipped_count > 0)
                 print_color({" ", std::to_string(skipped_count), " skipped"}, COLOR_NOT_RUN);
             print_color(".\n", COLOR_NORMAL);
+        }
+
+        void parse_args(int argc, char** argv) {
+            for (int i = 1; i < argc; i++) {
+                std::string arg = argv[i];
+                if (arg == "--timeout" || arg == "-t") {
+                    if (i + 1 < argc) {
+                        _timeout_ms = std::stoi(argv[i + 1]);
+                        i++;
+                    }
+                } else if (arg == "--include" || arg == "-i") {
+                    if (i + 1 < argc) {
+                        _include_filters.push_back(argv[i + 1]);
+                        i++;
+                    }
+                } else if (arg == "--exclude" || arg == "-e") {
+                    if (i + 1 < argc) {
+                        _exclude_filters.push_back(argv[i + 1]);
+                        i++;
+                    }
+                } else if (arg == "--include-regex" || arg == "-I") {
+                    if (i + 1 < argc) {
+                        _include_regex_filters.push_back(argv[i + 1]);
+                        i++;
+                    }
+                } else if (arg == "--exclude-regex" || arg == "-E") {
+                    if (i + 1 < argc) {
+                        _exclude_regex_filters.push_back(argv[i + 1]);
+                        i++;
+                    }
+                } else if (arg == "--version" || arg == "-v") {
+                    print(Version::get());
+                    exit(0);
+                } else if (arg == "--help" || arg == "-h") {
+                    print(
+                        {"MiniSpecs: ", Version::get(), " by Mrowr Purr\n\n", "Usage: ", argv[0],
+                         " [options]\n\n", "Options:\n",
+                         "  -t, --timeout <ms>  Set timeout in milliseconds (default: 1000)\n",
+                         "  -i, --include <re>  Run only specs matching the regular expression\n",
+                         "  -e, --exclude <re>  Skip specs matching the regular expression\n",
+                         "  -I, --include-regex <re>  Run only specs matching the regular expression\n",
+                         "  -E, --exclude-regex <re>  Skip specs matching the regular expression\n",
+                         "  -h, --help          Show this help\n"}
+                    );
+                    exit(0);
+                }
+            }
+        }
+
+    public:
+        SpecSuiteRunner(SpecRegistry& registry) : _registry(registry) {}
+
+        int run(int argc, char** argv) {
+            parse_args(argc, argv);
+
+            unsigned int passed_count  = 0;
+            unsigned int failed_count  = 0;
+            unsigned int skipped_count = 0;
+
+            for (auto& group : _registry.spec_groups()) {
+                bool should_skip_group = group.should_skip() || !should_run(group.name());
+                auto group_color       = should_skip_group ? COLOR_NOT_RUN : COLOR_GROUP_NAME;
+                if (should_skip_group) print_color("[SKIP] ", COLOR_NOT_RUN);
+                if (!group.name().empty()) print_color({"[" + group.name() + "]\n"}, group_color);
+
+                for (auto& spec : group.specs()) {
+                    bool should_skip_spec =
+                        should_skip_group || spec.should_skip() || !should_run(spec.name());
+                    auto spec_color = should_skip_spec ? COLOR_NOT_RUN : COLOR_SPEC_NAME;
+                    if (should_skip_spec) print_color("[SKIP] ", COLOR_NOT_RUN);
+                    print_color({"> ", spec.name(), "\n"}, spec_color);
+                    if (should_skip_spec) {
+                        skipped_count++;
+                        continue;
+                    }
+
+                    // Setup
+                    auto errorMessage = run_setups(group.setups());
+
+                    // Spec
+                    if (errorMessage.empty()) errorMessage = run(spec);
+
+                    // Teardown
+                    auto teardownErrorMessages = run_teardowns(group.teardowns());
+
+                    // Spec result output
+                    print_spec_result(spec.name(), errorMessage, teardownErrorMessages);
+
+                    // Count result
+                    if (errorMessage.empty() &&
+                        std::all_of(
+                            teardownErrorMessages.begin(), teardownErrorMessages.end(),
+                            [](const std::string& s) { return s.empty(); }
+                        )) {
+                        passed_count++;
+                    } else {
+                        failed_count++;
+                    }
+                }
+            }
+            print_suite_results(passed_count, failed_count, skipped_count);
+            return failed_count > 0 ? 1 : 0;
         }
     };
 }

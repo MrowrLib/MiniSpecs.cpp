@@ -2,7 +2,6 @@
 
 #include "SpecSuiteRunner.h"
 
-int main() {
-    MiniSpecsCpp::SpecSuiteRunner(MiniSpecsCpp::SpecRegistry::instance()).run();
-    return 0;
+int main(int argc, char** argv) {
+    return MiniSpecsCpp::SpecSuiteRunner(MiniSpecsCpp::SpecRegistry::instance()).run(argc, argv);
 }
