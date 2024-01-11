@@ -1,0 +1,6 @@
+#pragma once
+
+#include "Core/_MINISPECS_ONE_TIME_TEARDOWN_ASYNC.h"
+
+#define MINISPECS_ONE_TIME_TEARDOWN_ASYNC \
+    _MINISPECS_ONE_TIME_TEARDOWN_ASYNC(_MiniSpecs_One_Time_Teardown_Async_, __COUNTER__)

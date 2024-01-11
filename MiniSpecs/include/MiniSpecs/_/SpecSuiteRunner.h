@@ -223,6 +223,10 @@ namespace MiniSpecs {
                 if (should_skip_group) print_color("[SKIP] ", COLOR_NOT_RUN);
                 if (!group.name().empty()) print_color({"[" + group.name() + "]\n"}, group_color);
 
+                std::string oneTimeSetupsErrorMessage;
+                if (!should_skip_group)
+                    oneTimeSetupsErrorMessage = run_setups(group.one_time_setups());
+
                 for (auto& spec : group.specs()) {
                     bool should_skip_spec =
                         should_skip_group || spec.should_skip() || !should_run(spec.name());
@@ -231,6 +235,13 @@ namespace MiniSpecs {
                     print_color({"> ", spec.name(), "\n"}, spec_color);
                     if (should_skip_spec) {
                         skipped_count++;
+                        continue;
+                    }
+
+                    // Did the one time setup fail? If so, we fail (and re-use the same message)
+                    if (!oneTimeSetupsErrorMessage.empty()) {
+                        print_spec_result(spec.name(), oneTimeSetupsErrorMessage, {});
+                        failed_count++;
                         continue;
                     }
 
@@ -255,6 +266,18 @@ namespace MiniSpecs {
                         passed_count++;
                     } else {
                         failed_count++;
+                    }
+                }
+
+                // One time teardowns (note: the tests have ALREADY been run, this can NOT cause any
+                // tests to fail)
+                auto oneTimeTeardownErrorMessages = run_teardowns(group.one_time_teardowns());
+                for (auto& oneTimeTeardownErrorMessage : oneTimeTeardownErrorMessages) {
+                    if (!oneTimeTeardownErrorMessage.empty()) {
+                        print_color("Error:\n", COLOR_FAIL);
+                        print_color(
+                            {"  ", oneTimeTeardownErrorMessage, "\n"}, COLOR_FAILURE_MESSAGE
+                        );
                     }
                 }
             }

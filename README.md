@@ -41,7 +41,7 @@ Options:
 
 # TODO
 
-- [ ] OneTimeSetup and OneTimeTeardown
-- [ ] OneTimeSetupAsync and OneTimeTeardownAsync
+- [ ] Parameterized tests
+- [ ] Multiple assertion groups?
 - [ ] CMake/vcpkg demo
 - [ ] xmake/xrepo demo

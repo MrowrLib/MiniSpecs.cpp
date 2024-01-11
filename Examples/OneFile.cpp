@@ -3,26 +3,17 @@
 #include <MiniSpecs.h>
 #include <MiniSpecs/Main.h>
 
-Configure { std::cout << "Configure" << std::endl; }
-
-Teardown { std::cout << "Teardown" << std::endl; }
-
 Setup { std::cout << "Setup" << std::endl; }
-
-SetupAsync {
-    std::cout << "SetupAsync" << std::endl;
-    done();
+OneTimeSetup { std::cout << "OneTimeSetup" << std::endl; }
+OneTimeTeardown {
+    std::cout << "OneTimeTeardown" << std::endl;
+    throw "BOOM!";
+}
+OneTimeTeardown {
+    std::cout << "OneTimeTeardown" << std::endl;
+    throw "BOOM!";
 }
 
-TeardownAsync {
-    std::cout << "TeardownAsync" << std::endl;
-    done();
-}
-
-TODO Test("A") { throw "Something!"; }
-
-TestAsync("B") { done(); }
-
-Group("More Tests");
-
-Test("C") { throw "Something!"; }
+Test("Test 1") {}
+Test("Test 2") {}
+Test("Test 3") {}

@@ -56,6 +56,16 @@ namespace MiniSpecs {
             if (should_skip_next()) setup.skip();
         }
 
+        void add_one_time_setup(std::function<void()> fn) {
+            auto& setup = current_spec_group()->add_one_time_setup(fn);
+            if (should_skip_next()) setup.skip();
+        }
+
+        void add_one_time_setup(std::function<void(SpecDone done)> fn) {
+            auto& setup = current_spec_group()->add_one_time_setup(fn);
+            if (should_skip_next()) setup.skip();
+        }
+
         void add_teardown(std::function<void()> fn) {
             auto& teardown = current_spec_group()->add_teardown(fn);
             if (should_skip_next()) teardown.skip();
@@ -63,6 +73,16 @@ namespace MiniSpecs {
 
         void add_teardown(std::function<void(SpecDone done)> fn) {
             auto& teardown = current_spec_group()->add_teardown(fn);
+            if (should_skip_next()) teardown.skip();
+        }
+
+        void add_one_time_teardown(std::function<void()> fn) {
+            auto& teardown = current_spec_group()->add_one_time_teardown(fn);
+            if (should_skip_next()) teardown.skip();
+        }
+
+        void add_one_time_teardown(std::function<void(SpecDone done)> fn) {
+            auto& teardown = current_spec_group()->add_one_time_teardown(fn);
             if (should_skip_next()) teardown.skip();
         }
 
