@@ -41,6 +41,11 @@ TestAsync("Slow thing") {
     - [`vcpkg-configuration.json`](#vcpkg-configurationjson)
 - [Why?](#why)
 - [Getting Started](#getting-started)
+  - [Setup a test project](#setup-a-test-project)
+  - [Write your first test](#write-your-first-test)
+  - [Organizing tests into groups](#organizing-tests-into-groups)
+  - [Setup and Teardown](#setup-and-teardown)
+- [Syntax Reference](#syntax-reference)
 - [Command Line Options](#command-line-options)
 - [License](#license)
 
@@ -124,7 +129,15 @@ _I like it, and I hope you do too!_
 
 # Getting Started
 
-...
+## Setup a test project
+
+## Write your first test
+
+## Organizing tests into groups
+
+## Setup and Teardown
+
+# Syntax Reference
 
 # Command Line Options
 
