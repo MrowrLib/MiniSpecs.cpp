@@ -30,13 +30,13 @@ MiniSpecs: 0.1.0 by Mrowr Purr
 Usage: D:\\Code\\MrowrLib\\MiniSpecs.cpp\\build\\windows\\x64\\debug\\Example Tests C++11.exe [options]
 
 Options:
-  -t, --timeout <ms>  Set timeout in milliseconds (default: 5000)
-  -i, --include <re>  Run only specs matching the regular expression
-  -e, --exclude <re>  Skip specs matching the regular expression
-  -I, --include-regex <re>  Run only specs matching the regular expression
-  -E, --exclude-regex <re>  Skip specs matching the regular expression
-  -h, --help          Show this help
-  -v, --version       Show version
+  -t, --timeout        <ms>      Set timeout in milliseconds (default: 5000)
+  -i, --include        <name>    Run only specs containing text in the spec/group name
+  -e, --exclude        <name>    Skip specs containing text in the spec/group name
+  -I, --include-regex  <pattern> Run only specs with spec/group name matching the regular expression
+  -E, --exclude-regex  <pattern> Skip specs with spec/group name matching the regular expression
+  -h, --help           Show this help
+  -v, --version        Show version
 ```
 
 # TODO
