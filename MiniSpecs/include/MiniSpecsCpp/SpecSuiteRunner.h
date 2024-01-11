@@ -193,13 +193,14 @@ namespace MiniSpecsCpp {
                     print(
                         {"MiniSpecs: ", Version::get(), " by Mrowr Purr\n\n", "Usage: ", argv[0],
                          " [options]\n\n", "Options:\n",
-                         "  -t, --timeout <ms>  Set timeout in milliseconds (default: 5000)\n",
-                         "  -i, --include <re>  Run only specs matching the regular expression\n",
-                         "  -e, --exclude <re>  Skip specs matching the regular expression\n",
-                         "  -I, --include-regex <re>  Run only specs matching the regular expression\n",
-                         "  -E, --exclude-regex <re>  Skip specs matching the regular expression\n",
-                         "  -h, --help          Show this help\n",
-                         "  -v, --version       Show version\n"}
+                         "  -t, --timeout        <ms>      Set timeout in milliseconds (default: ",
+                         std::to_string(_timeout_ms), ")\n",
+                         "  -i, --include        <name>    Run only specs containing text in the spec/group name\n",
+                         "  -e, --exclude        <name>    Skip specs containing text in the spec/group name\n",
+                         "  -I, --include-regex  <pattern> Run only specs with spec/group name matching the regular expression\n",
+                         "  -E, --exclude-regex  <pattern> Skip specs with spec/group name matching the regular expression\n",
+                         "  -h, --help           Show this help\n",
+                         "  -v, --version        Show version\n"}
                     );
                     exit(0);
                 }
