@@ -1,6 +1,7 @@
 #pragma once
 
 #include <future>
+#include <iostream>
 #include <regex>
 #include <vector>
 
