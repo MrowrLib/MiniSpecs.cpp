@@ -27,7 +27,7 @@ TestAsync("Slow thing") {
 ```
 MiniSpecs: 0.1.0 by Mrowr Purr
 
-Usage: D:\\Code\\MrowrLib\\MiniSpecs.cpp\\build\\windows\\x64\\debug\\Example Tests C++11.exe [options]
+Usage: MyTests.exe [options]
 
 Options:
   -t, --timeout        <ms>      Set timeout in milliseconds (default: 5000)
