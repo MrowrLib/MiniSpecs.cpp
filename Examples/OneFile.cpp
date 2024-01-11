@@ -20,3 +20,6 @@
 //     //
 //    // Now you get the values using their keys:
 //    auto num = get_test_data<int>("key1");
+
+Test("Hello") {}
+Test("World") {}

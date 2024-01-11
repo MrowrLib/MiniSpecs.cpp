@@ -22,34 +22,46 @@ namespace MiniSpecs {
         std::vector<std::string> _include_regex_filters;
         std::vector<std::string> _exclude_regex_filters;
 
-        bool should_run(const std::string& name) {
+        bool is_excluded(const std::string& name) {
             if (!_exclude_filters.empty()) {
                 for (auto& filter : _exclude_filters)
-                    if (name.find(filter) != std::string::npos) return false;
+                    if (name.find(filter) != std::string::npos) return true;
             }
+
             if (!_exclude_regex_filters.empty()) {
                 for (auto& filter : _exclude_regex_filters)
-                    if (std::regex_match(name, std::regex(filter))) return false;
+                    if (std::regex_match(name, std::regex(filter))) return true;
             }
+
+            return false;
+        }
+
+        bool passes_include_filters(const std::string& name) {
             if (!_include_filters.empty()) {
-                bool should_run = false;
+                bool passes = false;
                 for (auto& filter : _include_filters)
                     if (name.find(filter) != std::string::npos) {
-                        should_run = true;
+                        passes = true;
                         break;
                     }
-                if (!should_run) return false;
+                if (!passes) return false;
             }
+
             if (!_include_regex_filters.empty()) {
-                bool should_run = false;
+                bool passes = false;
                 for (auto& filter : _include_regex_filters)
                     if (std::regex_match(name, std::regex(filter))) {
-                        should_run = true;
+                        passes = true;
                         break;
                     }
-                if (!should_run) return false;
+                if (!passes) return false;
             }
+
             return true;
+        }
+
+        bool should_run(const std::string& name) {
+            return !is_excluded(name) && passes_include_filters(name);
         }
 
         std::string run(Runnable& runnable) {
@@ -219,7 +231,7 @@ namespace MiniSpecs {
             unsigned int skipped_count = 0;
 
             for (auto& group : _registry.spec_groups()) {
-                bool should_skip_group = group.should_skip() || !should_run(group.name());
+                bool should_skip_group = group.should_skip() || is_excluded(group.name());
                 auto group_color       = should_skip_group ? COLOR_NOT_RUN : COLOR_GROUP_NAME;
                 if (should_skip_group) print_color("[SKIP] ", COLOR_NOT_RUN);
                 if (!group.name().empty()) print_color({"[" + group.name() + "]\n"}, group_color);
@@ -229,8 +241,9 @@ namespace MiniSpecs {
                     oneTimeSetupsErrorMessage = run_setups(group.one_time_setups());
 
                 for (auto& spec : group.specs()) {
-                    bool should_skip_spec =
-                        should_skip_group || spec.should_skip() || !should_run(spec.name());
+                    std::string specNameWithGroup = group.name() + " " + spec.name();
+                    bool        should_skip_spec =
+                        should_skip_group || spec.should_skip() || !should_run(specNameWithGroup);
                     auto spec_color = should_skip_spec ? COLOR_NOT_RUN : COLOR_SPEC_NAME;
                     if (should_skip_spec) print_color("[SKIP] ", COLOR_NOT_RUN);
                     print_color({"> ", spec.name(), "\n"}, spec_color);
