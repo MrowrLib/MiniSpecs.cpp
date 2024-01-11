@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "Done.h"
+#include "SpecDone.h"
 #include "SpecGroup.h"
 
-namespace MiniSpecsCpp {
+namespace MiniSpecs {
 
     class SpecRegistry {
         std::vector<SpecGroup> _spec_groups;
@@ -41,7 +41,7 @@ namespace MiniSpecsCpp {
             if (should_skip_next()) spec.skip();
         }
 
-        void add_spec(std::string name, std::function<void(Done done)> fn) {
+        void add_spec(std::string name, std::function<void(SpecDone done)> fn) {
             auto& spec = current_spec_group()->add_spec(name, fn);
             if (should_skip_next()) spec.skip();
         }
@@ -51,7 +51,7 @@ namespace MiniSpecsCpp {
             if (should_skip_next()) setup.skip();
         }
 
-        void add_setup(std::function<void(Done done)> fn) {
+        void add_setup(std::function<void(SpecDone done)> fn) {
             auto& setup = current_spec_group()->add_setup(fn);
             if (should_skip_next()) setup.skip();
         }
@@ -61,7 +61,7 @@ namespace MiniSpecsCpp {
             if (should_skip_next()) teardown.skip();
         }
 
-        void add_teardown(std::function<void(Done done)> fn) {
+        void add_teardown(std::function<void(SpecDone done)> fn) {
             auto& teardown = current_spec_group()->add_teardown(fn);
             if (should_skip_next()) teardown.skip();
         }

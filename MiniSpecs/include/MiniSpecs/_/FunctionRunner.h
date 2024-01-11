@@ -2,7 +2,7 @@
 
 #include <functional>
 
-namespace MiniSpecsCpp {
+namespace MiniSpecs {
 
     struct FunctionRunner {
         FunctionRunner(std::function<void()> function) { function(); }

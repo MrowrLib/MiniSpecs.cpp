@@ -41,5 +41,7 @@ Options:
 
 # TODO
 
+- [ ] OneTimeSetup and OneTimeTeardown
+- [ ] OneTimeSetupAsync and OneTimeTeardownAsync
 - [ ] CMake/vcpkg demo
 - [ ] xmake/xrepo demo

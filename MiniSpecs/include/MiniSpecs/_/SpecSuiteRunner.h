@@ -11,7 +11,7 @@
     #include <snowhouse/snowhouse.h>
 #endif
 
-namespace MiniSpecsCpp {
+namespace MiniSpecs {
 
     class SpecSuiteRunner {
         SpecRegistry&            _registry;
@@ -57,7 +57,7 @@ namespace MiniSpecsCpp {
                 if (runnable.is_async()) {
                     std::promise<void> promise;
                     std::future<void>  future = promise.get_future();
-                    auto               done   = Done(promise);
+                    auto               done   = SpecDone(promise);
                     runnable(&done);
                     if (future.wait_for(std::chrono::milliseconds(_timeout_ms)) ==
                         std::future_status::timeout) {
@@ -79,7 +79,7 @@ namespace MiniSpecsCpp {
             return errorMessage;
         }
 
-        std::string run_setups(std::vector<Setup>& setups) {
+        std::string run_setups(std::vector<SpecSetup>& setups) {
             std::string errorMessage;
             for (auto& setup : setups) {
                 errorMessage = run(setup);
@@ -88,7 +88,7 @@ namespace MiniSpecsCpp {
             return errorMessage;
         }
 
-        std::vector<std::string> run_teardowns(std::vector<Teardown>& teardowns) {
+        std::vector<std::string> run_teardowns(std::vector<SpecTeardown>& teardowns) {
             std::vector<std::string> errorMessages;
             for (auto& teardown : teardowns) errorMessages.emplace_back(run(teardown));
             return errorMessages;

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace MiniSpecsCpp {
+namespace MiniSpecs {
 
     class Version {
     public:

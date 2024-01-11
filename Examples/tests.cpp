@@ -1,1 +1,1 @@
-#include <MiniSpecsRunner>
+#include <MiniSpecs/Run>

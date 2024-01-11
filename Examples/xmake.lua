@@ -2,7 +2,8 @@ add_requires("vcpkg::snowhouse", "libassert_latest")
 
 target("Example Tests C++11")
     set_kind("binary")
-    add_files("*.cpp")
+    -- add_files("*.cpp")
+    add_files("OneFile.cpp")
     add_deps("MiniSpecs")
     add_packages("vcpkg::snowhouse")
 

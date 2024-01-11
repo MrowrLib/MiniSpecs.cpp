@@ -2,13 +2,13 @@
 
 #include <future>
 
-namespace MiniSpecsCpp {
+namespace MiniSpecs {
 
-    class Done {
+    class SpecDone {
         std::promise<void>& _promise;
 
     public:
-        Done(std::promise<void>& promise) : _promise(promise) {}
+        SpecDone(std::promise<void>& promise) : _promise(promise) {}
 
         void operator()() const { _promise.set_value(); }
     };
