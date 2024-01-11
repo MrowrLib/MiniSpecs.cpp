@@ -115,10 +115,10 @@ This is a syntax that I **adore** (_and the DSL is **completely configurable!**_
 
 It checks all of the fantastic boxes for me:
 
-> - [x] Easy to write
-> - [x] Easy to read
-> - [x] Easy to run
-> - [x] Supports async tests
+- [x] Easy to write
+- [x] Easy to read
+- [x] Easy to run
+- [x] Supports async tests
 
 _I like it, and I hope you do too!_
 
