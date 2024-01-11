@@ -79,7 +79,7 @@ namespace MiniSpecs {
             return errorMessage;
         }
 
-        std::string run_setups(std::vector<SpecSetup>& setups) {
+        std::string run_setups(std::vector<Runnable>& setups) {
             std::string errorMessage;
             for (auto& setup : setups) {
                 errorMessage = run(setup);
@@ -88,7 +88,7 @@ namespace MiniSpecs {
             return errorMessage;
         }
 
-        std::vector<std::string> run_teardowns(std::vector<SpecTeardown>& teardowns) {
+        std::vector<std::string> run_teardowns(std::vector<Runnable>& teardowns) {
             std::vector<std::string> errorMessages;
             for (auto& teardown : teardowns) errorMessages.emplace_back(run(teardown));
             return errorMessages;

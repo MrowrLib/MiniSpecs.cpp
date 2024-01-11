@@ -3,6 +3,8 @@
 #include <MiniSpecs.h>
 #include <MiniSpecs/Main.h>
 
+Configure { std::cout << "Configure" << std::endl; }
+
 Teardown { std::cout << "Teardown" << std::endl; }
 
 Setup { std::cout << "Setup" << std::endl; }
