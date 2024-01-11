@@ -6,7 +6,7 @@
 
 ## What?
 
-Simple, beautiful, incredibly easy to write and read tests for `C++11` and beyond!
+Simple, easy to write and read tests for `C++11` and beyond!
 
 ```cpp
 #define SPEC_GROUP My_Tests
