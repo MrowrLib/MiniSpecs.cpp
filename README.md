@@ -11,8 +11,8 @@ Simple, beautiful, incredibly easy to write and read tests for `C++11` and beyon
 ```cpp
 #define SPEC_GROUP My_Tests
  
-#include <MiniSpecs/Main.h> // includes main() to run tests
-#include <MiniSpecs.h>      // includes MiniSpecs framework
+#include <MiniSpecs/Main.h> // includes main()
+#include <MiniSpecs.h>      // includes MiniSpecs
  
 Setup    { /* Setup Code */ }
 Teardown { /* Teardown Code */ }
