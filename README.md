@@ -43,10 +43,13 @@ TestAsync("Slow thing") {
 - [Getting Started](#getting-started)
   - [Setup a test project](#setup-a-test-project)
   - [Write your first test](#write-your-first-test)
+  - [Running Tests](#running-tests)
+    - [Running Certain Tests](#running-certain-tests)
+    - [Command Line Options](#command-line-options)
   - [Organizing tests into groups](#organizing-tests-into-groups)
   - [Setup and Teardown](#setup-and-teardown)
+- [Customizing the syntax to your liking!](#customizing-the-syntax-to-your-liking)
 - [Syntax Reference](#syntax-reference)
-- [Command Line Options](#command-line-options)
 - [License](#license)
 
 
@@ -133,13 +136,11 @@ _I like it, and I hope you do too!_
 
 ## Write your first test
 
-## Organizing tests into groups
+## Running Tests
 
-## Setup and Teardown
+### Running Certain Tests
 
-# Syntax Reference
-
-# Command Line Options
+### Command Line Options
 
 ```
 MiniSpecs: 0.1.0 by Mrowr Purr
@@ -155,6 +156,14 @@ Options:
   -h, --help           Show this help
   -v, --version        Show version
 ```
+
+## Organizing tests into groups
+
+## Setup and Teardown
+
+# Customizing the syntax to your liking!
+
+# Syntax Reference
 
 # License
 

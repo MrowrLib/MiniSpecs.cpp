@@ -9,7 +9,7 @@
     MiniSpecs::FunctionRunner                                                                                          \
         __MiniSpecs_ConcatWithCompilationUnitIDAndCounter(__MiniSpecs_Concat(symbol, _ONE_TIME_SETUP_RUNNER_), count)( \
             []() {                                                                                                     \
-                MiniSpecs::SpecRegistry::instance().add_one_time_setup(                                                \
+                MiniSpecs::SpecDefinitions::instance().add_one_time_setup(                                             \
                     __MiniSpecs_ConcatWithCompilationUnitIDAndCounter(                                                 \
                         __MiniSpecs_Concat(symbol, _ONE_TIME_SETUP_), count                                            \
                     )                                                                                                  \

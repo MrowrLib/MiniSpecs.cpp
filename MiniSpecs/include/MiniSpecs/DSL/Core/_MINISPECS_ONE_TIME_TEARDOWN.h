@@ -9,7 +9,7 @@
     MiniSpecs::FunctionRunner                                                                                             \
         __MiniSpecs_ConcatWithCompilationUnitIDAndCounter(__MiniSpecs_Concat(symbol, _ONE_TIME_TEARDOWN_RUNNER_), count)( \
             []() {                                                                                                        \
-                MiniSpecs::SpecRegistry::instance().add_one_time_teardown(                                                \
+                MiniSpecs::SpecDefinitions::instance().add_one_time_teardown(                                             \
                     __MiniSpecs_ConcatWithCompilationUnitIDAndCounter(                                                    \
                         __MiniSpecs_Concat(symbol, _ONE_TIME_TEARDOWN_), count                                            \
                     )                                                                                                     \

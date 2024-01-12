@@ -9,7 +9,7 @@
     MiniSpecs::FunctionRunner                                                                                \
         __MiniSpecs_ConcatWithCompilationUnitIDAndCounter(__MiniSpecs_Concat(symbol, _TEST_RUNNER_), count)( \
             []() {                                                                                           \
-                MiniSpecs::SpecRegistry::instance().add_spec(                                                \
+                MiniSpecs::SpecDefinitions::instance().add_spec(                                             \
                     testDescription, __MiniSpecs_ConcatWithCompilationUnitIDAndCounter(                      \
                                          __MiniSpecs_Concat(symbol, _TEST_), count                           \
                                      )                                                                       \

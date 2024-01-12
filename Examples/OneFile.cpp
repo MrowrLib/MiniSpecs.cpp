@@ -2,6 +2,9 @@
 
 #include <MiniSpecs.h>
 #include <MiniSpecs/Main.h>
+#include <snowhouse/snowhouse.h>
+
+using namespace snowhouse;
 
 // Idea:
 // TestData("First Values", 69, "String 69");
@@ -21,5 +24,8 @@
 //    // Now you get the values using their keys:
 //    auto num = get_test_data<int>("key1");
 
-Test("Hello") {}
+Test("Hello") {
+    //
+    AssertThat(1, Equals(2));
+}
 Test("World") {}

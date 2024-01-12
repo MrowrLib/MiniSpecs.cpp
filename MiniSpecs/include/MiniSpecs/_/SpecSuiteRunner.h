@@ -5,8 +5,8 @@
 #include <regex>
 #include <vector>
 
-#include "SpecRegistry.h"
-#include "Version.h"
+#include "../Version.h"
+#include "SpecDefinitions.h"
 
 #if __has_include(<snowhouse/snowhouse.h>)
     #include <snowhouse/snowhouse.h>
@@ -15,7 +15,7 @@
 namespace MiniSpecs {
 
     class SpecSuiteRunner {
-        SpecRegistry&            _registry;
+        SpecDefinitions&         _registry;
         unsigned int             _timeout_ms = 5000;
         std::vector<std::string> _include_filters;
         std::vector<std::string> _exclude_filters;
@@ -221,7 +221,7 @@ namespace MiniSpecs {
         }
 
     public:
-        SpecSuiteRunner(SpecRegistry& registry) : _registry(registry) {}
+        SpecSuiteRunner(SpecDefinitions& registry) : _registry(registry) {}
 
         int run(int argc, char** argv) {
             parse_args(argc, argv);

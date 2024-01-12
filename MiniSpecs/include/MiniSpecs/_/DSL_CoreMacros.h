@@ -1,7 +1,7 @@
 #pragma once
 
-#include "FunctionRunner.h"  // IWYU pragma: keep
-#include "SpecRegistry.h"    // IWYU pragma: keep
+#include "FunctionRunner.h"   // IWYU pragma: keep
+#include "SpecDefinitions.h"  // IWYU pragma: keep
 
 #define __MiniSpecs_Stringize_Simple(symbol) #symbol
 #define __MiniSpecs_Stringize(symbol) __MiniSpecs_Stringize_Simple(symbol)

@@ -9,7 +9,7 @@
 
 namespace MiniSpecs {
 
-    class SpecRegistry {
+    class SpecDefinitions {
         std::vector<SpecGroup> _spec_groups;
         SpecGroup*             _current_spec_group;
         bool                   _skip_next = false;
@@ -21,8 +21,8 @@ namespace MiniSpecs {
         }
 
     public:
-        static SpecRegistry& instance() {
-            static SpecRegistry instance;
+        static SpecDefinitions& instance() {
+            static SpecDefinitions instance;
             return instance;
         }
 
