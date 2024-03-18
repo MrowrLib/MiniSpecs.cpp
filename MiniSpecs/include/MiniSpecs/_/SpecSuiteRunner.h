@@ -16,7 +16,8 @@ namespace MiniSpecs {
 
     class SpecSuiteRunner {
         SpecDefinitions&         _registry;
-        unsigned int             _timeout_ms = 5000;
+        unsigned int             _timeout_ms      = 5000;
+        bool                     _only_list_tests = false;
         std::vector<std::string> _include_filters;
         std::vector<std::string> _exclude_filters;
         std::vector<std::string> _include_regex_filters;
@@ -179,6 +180,8 @@ namespace MiniSpecs {
                         _timeout_ms = std::stoi(argv[i + 1]);
                         i++;
                     }
+                } else if (arg == "--list" || arg == "-l") {
+                    _only_list_tests = true;
                 } else if (arg == "--include" || arg == "-i") {
                     if (i + 1 < argc) {
                         _include_filters.push_back(argv[i + 1]);
@@ -220,11 +223,24 @@ namespace MiniSpecs {
             }
         }
 
+        void list_tests() {
+            for (auto& group : _registry.spec_groups()) {
+                for (auto& spec : group.specs()) {
+                    print(group.name() + " > " + spec.name() + "\n");
+                }
+            }
+        }
+
     public:
         SpecSuiteRunner(SpecDefinitions& registry) : _registry(registry) {}
 
         int run(int argc, char** argv) {
             parse_args(argc, argv);
+
+            if (_only_list_tests) {
+                list_tests();
+                return 0;
+            }
 
             unsigned int passed_count  = 0;
             unsigned int failed_count  = 0;

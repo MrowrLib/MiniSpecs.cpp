@@ -1,8 +1,7 @@
 #pragma once
 
+#include <MiniSpecs.h>
 #include <snowhouse/snowhouse.h>
-
-#include <MiniSpecs/DSL>
 
 #if __cplusplus >= 201703L
     #include <assert.hpp>
