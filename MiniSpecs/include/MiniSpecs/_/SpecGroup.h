@@ -30,13 +30,19 @@ namespace MiniSpecs {
         std::vector<Runnable>& one_time_setups() { return _one_time_setups; }
         std::vector<Runnable>& one_time_teardowns() { return _one_time_teardowns; }
 
-        SpecTest& add_spec(std::string name, std::function<void()> test) {
-            _specs.emplace_back(name, test);
+        SpecTest& add_spec(
+            std::string name, std::string file_path, unsigned int line_number,
+            std::function<void()> test
+        ) {
+            _specs.emplace_back(name, file_path, line_number, test);
             return _specs.back();
         }
 
-        SpecTest& add_spec(std::string name, std::function<void(SpecDone done)> test) {
-            _specs.emplace_back(name, test);
+        SpecTest& add_spec(
+            std::string name, std::string file_path, unsigned int line_number,
+            std::function<void(SpecDone done)> test
+        ) {
+            _specs.emplace_back(name, file_path, line_number, test);
             return _specs.back();
         }
 
