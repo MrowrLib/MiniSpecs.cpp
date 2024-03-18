@@ -36,13 +36,19 @@ namespace MiniSpecs {
             return _current_spec_group;
         }
 
-        void add_spec(std::string name, std::function<void()> fn) {
-            auto& spec = current_spec_group()->add_spec(name, fn);
+        void add_spec(
+            std::string name, std::string file_path, unsigned int line_number,
+            std::function<void()> fn
+        ) {
+            auto& spec = current_spec_group()->add_spec(name, file_path, line_number, fn);
             if (should_skip_next()) spec.skip();
         }
 
-        void add_spec(std::string name, std::function<void(SpecDone done)> fn) {
-            auto& spec = current_spec_group()->add_spec(name, fn);
+        void add_spec(
+            std::string name, std::string file_path, unsigned int line_number,
+            std::function<void(SpecDone done)> fn
+        ) {
+            auto& spec = current_spec_group()->add_spec(name, file_path, line_number, fn);
             if (should_skip_next()) spec.skip();
         }
 

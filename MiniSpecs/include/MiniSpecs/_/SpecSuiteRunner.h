@@ -226,7 +226,10 @@ namespace MiniSpecs {
         void list_tests() {
             for (auto& group : _registry.spec_groups()) {
                 for (auto& spec : group.specs()) {
-                    print(group.name() + " > " + spec.name() + "\n");
+                    print(
+                        spec.file_path() + ":" + std::to_string(spec.line_number()) + " " +
+                        group.name() + " > " + spec.name() + "\n"
+                    );
                 }
             }
         }
