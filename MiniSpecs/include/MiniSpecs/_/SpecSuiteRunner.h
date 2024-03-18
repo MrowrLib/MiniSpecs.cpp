@@ -18,6 +18,9 @@ namespace MiniSpecs {
         SpecDefinitions&         _registry;
         unsigned int             _timeout_ms      = 5000;
         bool                     _only_list_tests = false;
+        std::string              _file_path_to_run;
+        std::string              _group_name_to_run;
+        unsigned int             _line_number_to_run;
         std::vector<std::string> _include_filters;
         std::vector<std::string> _exclude_filters;
         std::vector<std::string> _include_regex_filters;
@@ -61,9 +64,16 @@ namespace MiniSpecs {
             return true;
         }
 
-        bool should_run(const std::string& name) {
-            return !is_excluded(name) && passes_include_filters(name);
+        bool should_run(const SpecTest& spec) {
+            if (!_file_path_to_run.empty()) {
+                if (spec.file_path() != _file_path_to_run) return false;
+                if (_line_number_to_run != 0 && spec.line_number() != _line_number_to_run)
+                    return false;
+            }
+            return !is_excluded(spec.name()) && passes_include_filters(spec.name());
         }
+
+        bool only_print_test_output() const { return !_file_path_to_run.empty(); }
 
         std::string run(Runnable& runnable) {
             std::string errorMessage;
@@ -136,6 +146,21 @@ namespace MiniSpecs {
             const std::string& specName, const std::string& errorMessage,
             const std::vector<std::string>& teardownErrorMessages
         ) {
+            if (only_print_test_output()) {
+                if (!errorMessage.empty() ||
+                    std::any_of(
+                        teardownErrorMessages.begin(), teardownErrorMessages.end(),
+                        [](const std::string& s) { return !s.empty(); }
+                    )) {
+                    if (!errorMessage.empty()) print(errorMessage + "\n");
+                    for (auto& teardownErrorMessage : teardownErrorMessages)
+                        if (!teardownErrorMessage.empty()) print(teardownErrorMessage + "\n");
+                } else {
+                    print_color({"  Passed: ", specName, "\n"}, COLOR_PASS);
+                }
+                return;
+            }
+
             if (!errorMessage.empty() ||
                 std::any_of(
                     teardownErrorMessages.begin(), teardownErrorMessages.end(),
@@ -175,13 +200,23 @@ namespace MiniSpecs {
         void parse_args(int argc, char** argv) {
             for (int i = 1; i < argc; i++) {
                 std::string arg = argv[i];
-                if (arg == "--timeout" || arg == "-t") {
+                if (arg == "--list" || arg == "-l") {
+                    _only_list_tests = true;
+                } else if (arg == "--file" || arg == "-f") {
+                    if (i + 1 < argc) {
+                        _file_path_to_run = argv[i + 1];
+                        i++;
+                    }
+                } else if (arg == "--line" || arg == "-n") {
+                    if (i + 1 < argc) {
+                        _line_number_to_run = std::stoi(argv[i + 1]);
+                        i++;
+                    }
+                } else if (arg == "--timeout" || arg == "-t") {
                     if (i + 1 < argc) {
                         _timeout_ms = std::stoi(argv[i + 1]);
                         i++;
                     }
-                } else if (arg == "--list" || arg == "-l") {
-                    _only_list_tests = true;
                 } else if (arg == "--include" || arg == "-i") {
                     if (i + 1 < argc) {
                         _include_filters.push_back(argv[i + 1]);
@@ -252,8 +287,10 @@ namespace MiniSpecs {
             for (auto& group : _registry.spec_groups()) {
                 bool should_skip_group = group.should_skip() || is_excluded(group.name());
                 auto group_color       = should_skip_group ? COLOR_NOT_RUN : COLOR_GROUP_NAME;
-                if (should_skip_group) print_color("[SKIP] ", COLOR_NOT_RUN);
-                if (!group.name().empty()) print_color({"[" + group.name() + "]\n"}, group_color);
+                if (should_skip_group && !only_print_test_output())
+                    print_color("[SKIP] ", COLOR_NOT_RUN);
+                if (!group.name().empty() && !only_print_test_output())
+                    print_color({"[" + group.name() + "]\n"}, group_color);
 
                 std::string oneTimeSetupsErrorMessage;
                 if (!should_skip_group)
@@ -262,10 +299,12 @@ namespace MiniSpecs {
                 for (auto& spec : group.specs()) {
                     std::string specNameWithGroup = group.name() + " " + spec.name();
                     bool        should_skip_spec =
-                        should_skip_group || spec.should_skip() || !should_run(specNameWithGroup);
+                        should_skip_group || spec.should_skip() || !should_run(spec);
                     auto spec_color = should_skip_spec ? COLOR_NOT_RUN : COLOR_SPEC_NAME;
-                    if (should_skip_spec) print_color("[SKIP] ", COLOR_NOT_RUN);
-                    print_color({"> ", spec.name(), "\n"}, spec_color);
+                    if (should_skip_spec && !only_print_test_output())
+                        print_color("[SKIP] ", COLOR_NOT_RUN);
+                    if (!only_print_test_output())
+                        print_color({"> ", spec.name(), "\n"}, spec_color);
                     if (should_skip_spec) {
                         skipped_count++;
                         continue;
@@ -314,7 +353,8 @@ namespace MiniSpecs {
                     }
                 }
             }
-            print_suite_results(passed_count, failed_count, skipped_count);
+            if (!only_print_test_output())
+                print_suite_results(passed_count, failed_count, skipped_count);
             return failed_count > 0 ? 1 : 0;
         }
     };
