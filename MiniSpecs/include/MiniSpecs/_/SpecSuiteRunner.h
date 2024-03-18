@@ -355,6 +355,12 @@ namespace MiniSpecs {
             }
             if (!only_print_test_output())
                 print_suite_results(passed_count, failed_count, skipped_count);
+
+            if (!_file_path_to_run.empty() && passed_count == 0 && failed_count == 0) {
+                print("No tests found\n");
+                return 1;
+            }
+
             return failed_count > 0 ? 1 : 0;
         }
     };
