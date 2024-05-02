@@ -357,8 +357,11 @@ namespace MiniSpecs {
                 print_suite_results(passed_count, failed_count, skipped_count);
 
             if (!_file_path_to_run.empty() && passed_count == 0 && failed_count == 0) {
-                print("No tests found\n");
-                return 1;
+                if (skipped_count > 0) print("All tests skipped\n");
+                else {
+                    print("No tests found.");
+                    return 1;
+                }
             }
 
             return failed_count > 0 ? 1 : 0;
