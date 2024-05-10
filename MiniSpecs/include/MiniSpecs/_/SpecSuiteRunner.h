@@ -273,7 +273,20 @@ namespace MiniSpecs {
         SpecSuiteRunner(SpecDefinitions& registry) : _registry(registry) {}
 
         int run(int argc, char** argv) {
-            parse_args(argc, argv);
+            // parse_args(argc, argv);
+
+            if (argc == 3) {
+                argc = 5;
+                std::vector<std::string> string_args{argv[0], "--file", argv[1], "--line", argv[2]};
+                argv = new char*[5];
+                for (int i = 0; i < 5; i++) {
+                    argv[i] = new char[string_args[i].size() + 1];
+                    strcpy(argv[i], string_args[i].c_str());
+                }
+                parse_args(argc, argv);
+            } else {
+                parse_args(argc, argv);
+            }
 
             if (_only_list_tests) {
                 list_tests();
