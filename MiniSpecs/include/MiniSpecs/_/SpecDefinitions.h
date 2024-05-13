@@ -92,7 +92,14 @@ namespace MiniSpecs {
             if (should_skip_next()) teardown.skip();
         }
 
-        void add_group(std::string name) {
+        void add_group(std::string name, bool removeUnderscores = false) {
+            if (removeUnderscores) {
+                std::string::size_type pos = 0;
+                while ((pos = name.find('_', pos)) != std::string::npos) {
+                    name.replace(pos, 1, " ");
+                    pos += 1;
+                }
+            }
             _spec_groups.emplace_back(SpecGroup{name});
             _current_spec_group = &_spec_groups.back();
             if (should_skip_next()) _current_spec_group->skip();

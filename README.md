@@ -1,4 +1,4 @@
-<img src="Resources/Images/eyeglasses-35598_1280.png" align="right" width=100>
+<img src="Resources/Images/specs.png" align="right" width=150>
 
 # MiniSpecs.cpp
 
@@ -9,14 +9,14 @@
 Simple, easy to write and read tests for `C++11` and beyond!
 
 ```cpp
-#define SPEC_GROUP My_Tests
- 
+#define SPEC_NAME My_Tests
+
 #include <MiniSpecs/Main.h> // includes main()
 #include <MiniSpecs.h>      // includes MiniSpecs
- 
+
 Setup    { /* Setup Code */ }
 Teardown { /* Teardown Code */ }
- 
+
 Test("Some thing") {
     AssertThat(69, Equals(420));
 }
@@ -110,7 +110,7 @@ target_link_libraries(Example PRIVATE minispec::minispec)
 }
 ```
 
-> _Update the default-registry baseline to the latest commit from https://github.com/microsoft/vcpkg_  
+> _Update the default-registry baseline to the latest commit from https://github.com/microsoft/vcpkg_
 > _Update the MrowrLib/Packages baseline to the latest commit from https://github.com/MrowrLib/Packages_
 
 # Why?
@@ -143,7 +143,7 @@ _I like it, and I hope you do too!_
 ### Command Line Options
 
 ```
-MiniSpecs: 0.1.0 by Mrowr Purr
+MiniSpecs
 
 Usage: MyTests.exe [options]
 

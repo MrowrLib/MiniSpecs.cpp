@@ -242,8 +242,7 @@ namespace MiniSpecs {
                     exit(0);
                 } else if (arg == "--help" || arg == "-h") {
                     print(
-                        {"MiniSpecs: ", Version::get(), " by Mrowr Purr\n\n", "Usage: ", argv[0],
-                         " [options]\n\n", "Options:\n",
+                        {"MiniSpecs\n\n", "Usage: ", argv[0], " [options]\n\n", "Options:\n",
                          "  -t, --timeout        <ms>      Set timeout in milliseconds (default: ",
                          std::to_string(_timeout_ms), ")\n",
                          "  -i, --include        <name>    Run only specs containing text in the spec/group name\n",

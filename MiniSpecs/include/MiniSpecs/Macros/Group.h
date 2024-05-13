@@ -1,5 +1,5 @@
 #pragma once
 
-#include "../DSL/MINISPECS_DECLARE_GROUP.h"
+// #include "../DSL/MINISPECS_DECLARE_GROUP.h"
 
-#define Group(groupName) MINISPECS_DECLARE_GROUP(groupName)
+// #define Group(groupName) MINISPECS_DECLARE_GROUP(groupName, false)

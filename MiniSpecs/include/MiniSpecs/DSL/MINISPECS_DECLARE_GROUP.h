@@ -2,5 +2,5 @@
 
 #include "Core/_MINISPECS_DECLARE_GROUP.h"
 
-#define MINISPECS_DECLARE_GROUP(groupName) \
-    _MINISPECS_DECLARE_GROUP(groupName, _MiniSpecs_DeclareGroup_, __COUNTER__)
+#define MINISPECS_DECLARE_GROUP(groupName, removeUnderscores) \
+    _MINISPECS_DECLARE_GROUP(groupName, removeUnderscores, _MiniSpecs_DeclareGroup_, __COUNTER__)
