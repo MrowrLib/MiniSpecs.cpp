@@ -2,12 +2,12 @@
 
 #include "TestHelper.h"  // IWYU pragma: keep
 
-Test("Something!") {
-    //
-    //
+TestAsync("An Aync Test - Pass") {
+    AssertThat(1, Equals(1));
+    done();
 }
 
-Test("Something!") {
-    //
-    //
+TestAsync("An Aync Test - Fail") {
+    AssertThat(1, Equals(2));
+    done();
 }

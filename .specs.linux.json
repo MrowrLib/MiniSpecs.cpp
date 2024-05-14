@@ -9,6 +9,16 @@
             "run": "\"build/windows/x64/debug/Tests.exe\" --file {file} --line {line}",
             "debug": "build/windows/x64/debug/Tests.exe",
             "debugger": "cppvsdbg"
+        },
+        {
+            "name": "MiniSpec Specs (Linux)",
+            "pattern": "(?<filepath>.+):(?<linenumber>\\d+) (?<description>.+)",
+            "build": "xmake f -q -m debug && xmake build",
+            "discover": "\"build/linux/x86_64/debug/Tests\" --list",
+            "groupSeparator": " > ",
+            "run": "\"build/linux/x86_64/debug/Tests\" --file {file} --line {line}",
+            "debug": "build/linux/x86_64/debug/Tests",
+            "debugger": "cppdbg"
         }
     ],
     "defaults": {

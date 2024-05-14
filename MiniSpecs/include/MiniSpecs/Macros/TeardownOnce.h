@@ -2,4 +2,4 @@
 
 #include "../DSL/MINISPECS_ONE_TIME_TEARDOWN.h"
 
-#define OneTimeTeardown MINISPECS_ONE_TIME_TEARDOWN
+#define TeardownOnce MINISPECS_ONE_TIME_TEARDOWN

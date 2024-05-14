@@ -12,5 +12,5 @@ _MINISPECS_DECLARE_GROUP(
 );
 
 #else
-    #define _MiniSpecs_CompilationUnitID DefaultMiniSpecsCompilationUnit
+    #error "SPEC_NAME is not defined. Please define it before including MiniSpecs.h"
 #endif
